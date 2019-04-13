@@ -1,0 +1,7 @@
+tools/*
+!tools/*.cpp
+.vscode
+docs/*/*
+!docs/*/*.tex
+!docs/*/*.cls
+!docs/*/*.pdf
