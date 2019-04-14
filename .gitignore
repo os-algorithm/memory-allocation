@@ -1,7 +1,9 @@
 tools/*
 !tools/*.cpp
 .vscode
-docs/*/*
-!docs/*/*.tex
-!docs/*/*.cls
-!docs/*/*.pdf
+docs/*
+!docs/*.tex
+!docs/*.bib
+!docs/*.cls
+!docs/*.pdf
+!docs/assets
