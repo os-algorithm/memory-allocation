@@ -63,7 +63,7 @@
 	本文前面部分分析了离线情况下最优算法，再对动情况的一些启发式算法做了一些讨论。
 
 	\section{离线问题}
-	我们先考虑对于单个程序的离线的情况。这个时候我们提前知道整个内存分配申请序列，要求一个为每一个申请分配的方案，使得某个条件最优化。目前已有研究表明，在最小化申请的堆大小的情况下的求最优解是 NP-Hard 的 \cite{opt-nph}，但是这篇论文中的证明较为复杂。我们在这里提出一个更为简单的证明。
+	我们先考虑对于单个程序的离线的情况。这个时候我们提前知道整个内存分配申请序列，要求一个为每一个申请分配的方案，使得某个条件最优化。目前已有研究表明，在最小化申请的堆大小的情况下的求最优解是 NP-Hard 的 \cite{opt-nph}，近似算法则有 (2+$\epsilon$) 近似比的多项式算法 \cite{M2015A}。但是对于 NP-Hard 的证明， \cite{opt-nph} 中的证明较为复杂。我们在这里提出一个更为简单的证明。
 
 	\subsection{优化目标}
 
@@ -145,8 +145,33 @@
 		因此此时我们的问题和将剩下 $S$ 中的每个元素分到上面或下面部分等价。我们要从 $S$ 中选出一个子集，将它们分到下面，剩下的分到上面，而两边选出的集合的和应当都恰好是 $K$。这与 Partition Problem 等价。
 
 		因此我们证明了任何 Partition Problem 都可以用多项式时间转化成我们当前的问题，因此这个问题是 NP-Complete 的。
-
 	\end{proof}
+
+	\section{在线问题}
+	由于在线情形我们不知道未来的情况，因此我们只能通过贪心或启发式等方法进行近似。我们可以将动态内存分配算法大致分为以下三类：
+	\begin{enumerate}
+		\item Sequential-fit Methods，例如最先匹配算法
+		\item Buddy Methods，例如 Buddy System
+		\item Segregated-storage Methods，例如 Slab
+	\end{enumerate}
+
+	\subsection{Sequential-fit Methods}
+	这一类算法将所有空闲的块按照一定的方式排序，排成一个线性的结构，然后在 \texttt{alloc} 的时候从线性结构中找出满足条件的第一个块进行分配。这类算法一般采用了贪心策略。一般按照贪心策略的不同分为以下几种：
+
+	\subsubsection{\texttt{First-fit Strategy}}
+	这种策略是将所有空闲快按照位置从前向后排序，每次找到第一个足够大的块。这是按照位置从前向后贪心。这种策略实现简单，但是可能会导致前面的位置堆积很多小的外碎片。所需时间会按照分配次数逐渐变长。
+
+	\subsubsection{\texttt{Next-fit Strategy}}
+	这是 \texttt{First-fit Strategy} 的一个简易优化。\texttt{First-fit Strategy} 的问题是每次它都从第一个开始找，这会导致靠前的位置容易产生小碎片。因此 \texttt{Next-fit Strategy} 的思路是每次从上一次搜索结束的位置可以找，这样开始位置就具有一定的随机性，避免了碎片的大量堆积。
+
+	\subsubsection{\texttt{Best-fit Strategy}}
+	这种策略是将所有空闲块按照大小从小往大排序，每次找到第一个足够大的块。这是按照大小贪心，每次找到最小的可行块。这种策略可以留出更多空间给大的内存申请，但是实现起来相对困难。
+
+	\subsubsection{\texttt{Worst-fit Strategy}}
+	这种策略与 \texttt{Best-fit Strategy} 恰好相反，它把所有空闲块按从大向小排序，每次找到最大的一块。这个方法在申请较多小内存的时候较有用。
+
+	\subsection{Buddy Methods}
+	这部分比较常用的即为 Buddy Memory Allocation，思路是将内存每次分成两块，然后按照二进制进行分配。详情可以参见 \cite{wiki:buddy}。
 
 	\newpage
 
